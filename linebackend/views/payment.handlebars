@@ -1,0 +1,12 @@
+<h3>準備為訂單編號： {{order.id}} 付款 </h3>
+<h4>總價 {{order.amount}} </h4>
+
+<h6>您確定要付款了嗎?</h6>
+<form name='newebay' action='{{tradeInfo.PayGateWay}}' method="POST">
+  <input type="hidden" name="MerchantID" value="{{tradeInfo.MerchantID}}">
+  <input type="hidden" name="TradeInfo" value="{{tradeInfo.TradeInfo}}">
+  <input type="hidden" name="TradeSha" value="{{tradeInfo.TradeSha}}">
+  <input type="hidden" name="Version" value="{{tradeInfo.Version}}">
+  <button type="submit" class="btn btn-primary">付款</button>
+  <a class="ml-4" href="/">放棄</a>
+</form>
