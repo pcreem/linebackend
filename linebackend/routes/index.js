@@ -108,8 +108,13 @@ module.exports = (app, passport) => {
   const db = require('../models')
   const Line = db.Line
   const linebot = require('linebot');
-  const fs = require('fs');
-
+  var fs = require('fs');
+  var ffmpeg = require('fluent-ffmpeg');
+  var request = require('request');
+  var BufferHelper = require('bufferhelper');
+  var iconv = require('iconv-lite');
+  var md5 = require('md5');
+  var delayed = require('delayed');
 
   const bot = linebot({
     channelId: process.env.ChannelId,
@@ -118,7 +123,7 @@ module.exports = (app, passport) => {
   });
   const linebotParser = bot.parser();
 
-  const imgur = require('imgur');
+  var imgur = require('imgur');
   const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
   imgur.setClientId(IMGUR_CLIENT_ID);
@@ -189,15 +194,9 @@ module.exports = (app, passport) => {
           });
         });
       } else {
-        const ffmpeg = require('fluent-ffmpeg');
-        const request = require('request');
-        const BufferHelper = require('bufferhelper');
-        const iconv = require('iconv-lite');
-        const md5 = require('md5');
-        const delayed = require('delayed');
 
         event.message.content().then(function (content) {
-          fs.writeFileSync('upload/input.m4a', Buffer.from(content.toString('base64'), 'base64'));
+          fs.writeFileSync('input.m4a', Buffer.from(content.toString('base64'), 'base64'));
 
 
 
@@ -227,7 +226,7 @@ module.exports = (app, passport) => {
 
           }
 
-          convertFileFormat('upload/input.m4a', 'upload/output.wav', function (errorMessage) {
+          convertFileFormat('input.m4a', 'output.wav', function (errorMessage) {
 
           }, null, function () {
             console.log("success");
@@ -409,12 +408,12 @@ module.exports = (app, passport) => {
 
           var speechApi = new SpeechApiSample();
           speechApi.setLocalization('https://tw.olami.ai/cloudservice/api');
-          speechApi.setAuthorization(process.env.AppKey, process.env.AppSecret);
+          speechApi.setAuthorization('b51f2d231e30402791d3309654ed1453', '8ce4bf3f388a4d96acb34f604701af23');
           // Start sending audio file for recognition
-          speechApi.sendAudioFile('asr', 'nli,seg', true, './upload/output.wav', false, event);
+          speechApi.sendAudioFile('asr', 'nli,seg', true, './output.wav', false, event);
 
 
-        }).catch(function (e) { 
+        }).catch(function (e) {
           console.error(e);
         })
 
