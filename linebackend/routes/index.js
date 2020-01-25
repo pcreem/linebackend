@@ -411,7 +411,7 @@ module.exports = (app, passport) => {
           speechApi.setLocalization('https://tw.olami.ai/cloudservice/api');
           speechApi.setAuthorization('b51f2d231e30402791d3309654ed1453', '8ce4bf3f388a4d96acb34f604701af23');
           // Start sending audio file for recognition
-          speechApi.sendAudioFile('asr', 'nli,seg', true, './output.wav', false, event);
+          speechApi.sendAudioFile('asr', 'nli,seg', true, 'output.wav', false, event);
 
 
         }).catch(function (e) {
