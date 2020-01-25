@@ -197,7 +197,7 @@ module.exports = (app, passport) => {
         const delayed = require('delayed');
 
         event.message.content().then(function (content) {
-          fs.writeFileSync('/upload/input.m4a', Buffer.from(content.toString('base64'), 'base64'));
+          fs.writeFileSync('upload/input.m4a', Buffer.from(content.toString('base64'), 'base64'));
 
 
 
@@ -227,7 +227,7 @@ module.exports = (app, passport) => {
 
           }
 
-          convertFileFormat('/upload/input.m4a', '/upload/output.wav', function (errorMessage) {
+          convertFileFormat('upload/input.m4a', 'upload/output.wav', function (errorMessage) {
 
           }, null, function () {
             console.log("success");
