@@ -3,7 +3,7 @@ temp/
 
 .DS_Store
 config/config.js
-package-lock.json
+
 .env
 sample.wav
 ngrok.exe
