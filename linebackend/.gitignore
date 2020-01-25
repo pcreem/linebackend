@@ -3,6 +3,8 @@ temp/
 
 .DS_Store
 config/config.js
-models/index.js
-ngrok.exe
+package-lock.json
 .env
+sample.wav
+ngrok.exe
+ffmpeg.exe

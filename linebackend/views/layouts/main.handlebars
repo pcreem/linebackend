@@ -1217,9 +1217,12 @@ there.
 
         <li class="navbar-item"> <a class="navbar-link" href="/users/{{user.id}}">Hi, {{user.name}}</a></li>
         <li class="navbar-item"> <a class="navbar-link" href="/logout">Logout</a></li>
+        {{/ifCond}}
+
+        {{#if user}}
         {{else}}
         <li class="navbar-item"><a class="navbar-link" href="/signin">SignIn</a></li>
-        {{/ifCond}}
+        {{/if}}
 
       </ul>
 

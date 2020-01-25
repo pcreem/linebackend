@@ -1,17 +1,11 @@
 {
   "development": {
-    "username": "root",
-    "password": "password",
-    "database": "shopping_cart",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "url": "postgres://api_user:apipassword@127.0.0.1:5432/cop_shop",
+    "dialect": "postgres"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "url": "postgres://api_user:apipassword@127.0.0.1:5432/cop_shop",
+    "dialect": "postgres"
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
