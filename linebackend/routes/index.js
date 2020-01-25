@@ -108,13 +108,8 @@ module.exports = (app, passport) => {
   const db = require('../models')
   const Line = db.Line
   const linebot = require('linebot');
-  var fs = require('fs');
-  var ffmpeg = require('fluent-ffmpeg');
-  var request = require('request');
-  var BufferHelper = require('bufferhelper');
-  var iconv = require('iconv-lite');
-  var md5 = require('md5');
-  var delayed = require('delayed');
+  const fs = require('fs');
+
 
   const bot = linebot({
     channelId: process.env.ChannelId,
@@ -123,7 +118,7 @@ module.exports = (app, passport) => {
   });
   const linebotParser = bot.parser();
 
-  var imgur = require('imgur');
+  const imgur = require('imgur');
   const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
   imgur.setClientId(IMGUR_CLIENT_ID);
@@ -194,6 +189,12 @@ module.exports = (app, passport) => {
           });
         });
       } else {
+        const ffmpeg = require('fluent-ffmpeg');
+        const request = require('request');
+        const BufferHelper = require('bufferhelper');
+        const iconv = require('iconv-lite');
+        const md5 = require('md5');
+        const delayed = require('delayed');
 
         event.message.content().then(function (content) {
           fs.writeFileSync('input.m4a', Buffer.from(content.toString('base64'), 'base64'));
