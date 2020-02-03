@@ -1,10 +1,10 @@
 {
   "development": {
-    "url": "postgres://api_user:apipassword@127.0.0.1:5432/cop_shop",
+    "url": "postgres://api_user:password@127.0.0.1:5432/cop_shop",
     "dialect": "postgres"
   },
   "test": {
-    "url": "postgres://api_user:apipassword@127.0.0.1:5432/cop_shop",
+    "url": "postgres://api_user:password@127.0.0.1:5432/cop_shop",
     "dialect": "postgres"
   },
   "production": {

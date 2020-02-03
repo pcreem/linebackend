@@ -9,7 +9,9 @@
         <th>ID</th>
         <th>name</th>
         <th>image</th>
+        <th>price</th>
         <th>description</th>
+
         <th>          #</th>
       </tr>
     </thead>
@@ -19,6 +21,7 @@
         <td>{{this.usersn}}</td>
         <td>{{this.name}}</td>
         <td>{{this.image}}</td>
+        <td>{{this.price}}</td>
         <td>{{this.description}}</td> 
         <td><form action="/admin/lines/{{this.id}}?_method=DELETE" method="POST" style="display: inline; ">
           <a href="#" onclick="this.parentNode.submit()">delete</a>

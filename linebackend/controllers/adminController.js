@@ -548,6 +548,7 @@ const adminController = {
       lines = lines.map(line => ({
         ...line.dataValues,
       }))
+      console.log(lines)
       return res.render('admin/lines', { lines: lines })
     })
   },

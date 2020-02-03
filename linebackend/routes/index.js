@@ -108,8 +108,13 @@ module.exports = (app, passport) => {
   const db = require('../models')
   const Line = db.Line
   const linebot = require('linebot');
-  const fs = require('fs');
+  var fs = require('fs');
 
+  var request = require('request');
+  var BufferHelper = require('bufferhelper');
+  var iconv = require('iconv-lite');
+  var md5 = require('md5');
+  var delayed = require('delayed');
 
   const bot = linebot({
     channelId: process.env.ChannelId,
@@ -118,7 +123,7 @@ module.exports = (app, passport) => {
   });
   const linebotParser = bot.parser();
 
-  const imgur = require('imgur');
+  var imgur = require('imgur');
   const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
   imgur.setClientId(IMGUR_CLIENT_ID);
@@ -189,17 +194,12 @@ module.exports = (app, passport) => {
           });
         });
       } else {
-        const ffmpeg = require('fluent-ffmpeg');
-        const request = require('request');
-        const BufferHelper = require('bufferhelper');
-        const iconv = require('iconv-lite');
-        const md5 = require('md5');
-        const delayed = require('delayed');
 
         event.message.content().then(function (content) {
-          fs.writeFileSync('upload/input.m4a', Buffer.from(content.toString('base64'), 'base64'));
+          
+          fs.writeFileSync('input.m4a', Buffer.from(content.toString('base64'), 'base64'));
 
-
+          var ffmpeg = require('fluent-ffmpeg');
 
           function convertFileFormat(file, destination, error, progressing, finish) {
 
@@ -227,192 +227,198 @@ module.exports = (app, passport) => {
 
           }
 
-          convertFileFormat('upload/input.m4a', 'upload/output.wav', function (errorMessage) {
+          convertFileFormat('input.m4a', 'output.wav', function (errorMessage) {
 
           }, null, function () {
             console.log("success");
           });
 
+        
 
-          var apiBaseUrl = '';
-          var appKey = '';
-          var appSecret = '';
-          var cookies;
+         //inser speechtotext code
 
-          function SpeechApiSample() {
+         var apiBaseUrl = '';
+var appKey = '';
+var appSecret = '';
+var cookies;
 
-          }
+function SpeechApiSample() {
 
-          /**
-           * Setup your authorization information to access OLAMI services.
-           *
-           * @param appKey the AppKey you got from OLAMI developer console.
-           * @param appSecret the AppSecret you from OLAMI developer console.
-           */
-          SpeechApiSample.prototype.setAuthorization = function (appKey, appSecret) {
-            this.appKey = appKey;
-            this.appSecret = appSecret;
-          }
+}
 
-          /**
-           * Setup localization to select service area, this is related to different
-           * server URLs or languages, etc.
-           *
-           * @param apiBaseURL URL of the API service.
-           */
-          SpeechApiSample.prototype.setLocalization = function (apiBaseURL) {
-            this.apiBaseUrl = apiBaseURL;
-          }
+/**
+ * Setup your authorization information to access OLAMI services.
+ *
+ * @param appKey the AppKey you got from OLAMI developer console.
+ * @param appSecret the AppSecret you from OLAMI developer console.
+ */
+SpeechApiSample.prototype.setAuthorization = function (appKey, appSecret) {
+  this.appKey = appKey;
+  this.appSecret = appSecret;
+}
 
-          /**
-           * Send an audio file to speech recognition service.
-           *
-           * @param apiName the API name for 'api=xxx' HTTP parameter.
-           * @param seqValue the value of 'seq' for 'seq=xxx' HTTP parameter.
-           * @param finished TRUE to finish upload or FALSE to continue upload.
-           * @param filePath the path of the audio file you want to upload.
-           * @param compressed TRUE if the audio file is a Speex audio.
-           */
-          SpeechApiSample.prototype.sendAudioFile = function (apiName, seqValue,
-            finished, filePath, compressed, event) {
+/**
+ * Setup localization to select service area, this is related to different
+ * server URLs or languages, etc.
+ *
+ * @param apiBaseURL URL of the API service.
+ */
+SpeechApiSample.prototype.setLocalization = function (apiBaseURL) {
+  this.apiBaseUrl = apiBaseURL;
+}
 
-            var _this = this;
+/**
+ * Send an audio file to speech recognition service.
+ *
+ * @param apiName the API name for 'api=xxx' HTTP parameter.
+ * @param seqValue the value of 'seq' for 'seq=xxx' HTTP parameter.
+ * @param finished TRUE to finish upload or FALSE to continue upload.
+ * @param filePath the path of the audio file you want to upload.
+ * @param compressed TRUE if the audio file is a Speex audio.
+ */
+SpeechApiSample.prototype.sendAudioFile = function (apiName, seqValue,
+  finished, filePath, compressed, event) {
+    
+  var _this = this;
 
-            // Read the input audio file
-            fs.readFile(filePath, function (err, audioData) {
-              if (err) {
-                console.log(err);
-                throw err;
-              }
+  // Read the input audio file
+  fs.readFile(filePath, function (err, audioData) {
+    if (err) {
+      console.log(err);
+      throw err;
+    }
 
-              var url = _this.getBaseQueryUrl(apiName, seqValue);
-              url += '&compress=';
-              url += compressed ? '1' : '0';
-              url += '&stop=';
-              url += finished ? '1' : '0';
+    var url = _this.getBaseQueryUrl(apiName, seqValue);
+    url += '&compress=';
+    url += compressed ? '1' : '0';
+    url += '&stop=';
+    url += finished ? '1' : '0';
 
-              // Request speech recognition service by HTTP POST
-              request.post({
-                url: url,
-                body: audioData,
-                headers: {
-                  'Content-Type': 'application/octet-stream',
-                  'Connection': 'Keep-Alive',
-                  'Content-Length': audioData.length
-                }
-              }, function (err, res, body) {
-                if (err) {
-                  console.log(err);
-                  throw err;
-                }
-              }).on('response', function (response) {
-                var body = "";
-                response.on('data', function (data) {
-                  body += data;
-                });
-                response.on('end', function () {
-                  _this.cookies = response.headers['set-cookie'];
-                  console.log("\n----- Test Speech API, seq=nli,seg -----\n");
-                  console.log("\nSend audio file... \n");
-                  console.log('Result: ' + body);
-                  console.log('Cookie: ' + _this.cookies);
+    // Request speech recognition service by HTTP POST
+    request.post({
+      url: url,
+      body: audioData,
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'Connection': 'Keep-Alive',
+        'Content-Length': audioData.length
+      }
+    }, function (err, res, body) {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    }).on('response', function (response) {
+      var body = "";
+      response.on('data', function (data) {
+        body += data;
+      });
+      response.on('end', function () {
+        _this.cookies = response.headers['set-cookie'];
+        console.log("\n----- Test Speech API, seq=nli,seg -----\n");
+        console.log("\nSend audio file... \n");
+        console.log('Result: ' + body);
+        console.log('Cookie: ' + _this.cookies);
 
-                  delayed.delay(function () {
-                    _this.getRecognitionResult('asr', 'nli,seg', event);
-                  }, 500);
-                });
-              });
-            });
-          }
+        delayed.delay(function () {
+          _this.getRecognitionResult('asr', 'nli,seg', event);
+        }, 500);
+      });
+    });
+  });
+}
 
-          /**
-           * Get the speech recognition result for the audio you sent.
-           *
-           * @param apiName the API name for 'api=xxx' HTTP parameter.
-           * @param seqValue the value of 'seq' for 'seq=xxx' HTTP parameter.
-           */
-          SpeechApiSample.prototype.getRecognitionResult = function (apiName, seqValue, event) {
-            var _this = this;
-            var url = this.getBaseQueryUrl(apiName, seqValue);
-            url += '&stop=1';
-            // Request speech recognition service by HTTP GET
-            request.get({
-              url: url,
-              headers: {
-                'Cookie': this.cookies
-              }
-            }, function (err, res, body) {
-              if (err) {
-                console.log(err);
-              }
-            }).on('response', function (response) {
-              var bufferhelper = new BufferHelper();
-              response.on('data', function (chunk) {
-                bufferhelper.concat(chunk);
-              });
 
-              response.on('end', function () {
-                var body = iconv.decode(bufferhelper.toBuffer(), 'UTF-8');
-                var result = JSON.parse(body);
-                var return_status = result['data']['asr']['final'];
-                // Try to get recognition result if uploaded successfully.
-                // We just check the state by a lazy way :P , you should do it by JSON.
-                if (return_status !== true) {
-                  console.log("\n----- Get Recognition Result -----\n");
-                  // Well, check by lazy way...again :P , do it by JSON please.
-                  delayed.delay(function () {
-                    _this.getRecognitionResult('asr', 'nli,seg');
-                  }, 500);
-                } else {
-                  console.log("\n----- Get Recognition Result -----\n");
-                  console.log("Result:\n\n" + body);
-                  event.reply(`${result.data.asr.result}`)
-                }
-              });
-            });
-          }
 
-          /**
-           * Generate and get a basic HTTP query string
-           *
-           * @param apiName the API name for 'api=xxx' HTTP parameter.
-           * @param seqValue the value of 'seq' for 'seq=xxx' HTTP parameter.
-           */
-          SpeechApiSample.prototype.getBaseQueryUrl = function (apiName, seqValue) {
-            var dateTime = Date.now();
-            timestamp = dateTime;
+/**
+ * Get the speech recognition result for the audio you sent.
+ *
+ * @param apiName the API name for 'api=xxx' HTTP parameter.
+ * @param seqValue the value of 'seq' for 'seq=xxx' HTTP parameter.
+ */
+SpeechApiSample.prototype.getRecognitionResult = function (apiName, seqValue, event) {
+  var _this = this;
+  var url = this.getBaseQueryUrl(apiName, seqValue);
+  url += '&stop=1';
+  // Request speech recognition service by HTTP GET
+  request.get({
+    url: url,
+    headers: {
+      'Cookie': this.cookies
+    }
+  }, function (err, res, body) {
+    if (err) {
+      console.log(err);
+    }
+  }).on('response', function (response) {
+    var bufferhelper = new BufferHelper();
+    response.on('data', function (chunk) {
+      bufferhelper.concat(chunk);
+    });
 
-            var sign = '';
-            sign += this.appSecret;
-            sign += 'api=';
-            sign += apiName;
-            sign += 'appkey=';
-            sign += this.appKey;
-            sign += 'timestamp=';
-            sign += timestamp;
-            sign += this.appSecret;
-            // Generate MD5 digest.
-            sign = md5(sign);
+    response.on('end', function () {
+      var body = iconv.decode(bufferhelper.toBuffer(), 'UTF-8');
+      var result = JSON.parse(body);
+      var return_status = result['data']['asr']['final'];
+      // Try to get recognition result if uploaded successfully.
+      // We just check the state by a lazy way :P , you should do it by JSON.
+      if (return_status !== true) {
+        console.log("\n----- Get Recognition Result -----\n");
+        // Well, check by lazy way...again :P , do it by JSON please.
+        delayed.delay(function () {
+          _this.getRecognitionResult('asr', 'nli,seg', event);
+        }, 500);
+      } else {
+        console.log("\n----- Get Recognition Result -----\n");
+        console.log("Result:\n\n" + body);
+        event.reply(`${result.data.asr.result}`)
+      }
+    });
+  });
+}
 
-            // Assemble all the HTTP parameters you want to send
-            var url = '';
-            url += this.apiBaseUrl + '?_from=nodejs';
-            url += '&appkey=' + this.appKey;
-            url += '&api=';
-            url += apiName;
-            url += '&timestamp=' + timestamp;
-            url += '&sign=' + sign;
-            url += '&seq=' + seqValue;
 
-            return url;
-          }
+/**
+ * Generate and get a basic HTTP query string
+ *
+ * @param apiName the API name for 'api=xxx' HTTP parameter.
+ * @param seqValue the value of 'seq' for 'seq=xxx' HTTP parameter.
+ */
+SpeechApiSample.prototype.getBaseQueryUrl = function (apiName, seqValue) {
+  var dateTime = Date.now();
+  timestamp = dateTime;
 
-          var speechApi = new SpeechApiSample();
-          speechApi.setLocalization('https://tw.olami.ai/cloudservice/api');
-          speechApi.setAuthorization('b51f2d231e30402791d3309654ed1453', '8ce4bf3f388a4d96acb34f604701af23');
-          // Start sending audio file for recognition
-          speechApi.sendAudioFile('asr', 'nli,seg', true, '/upload/output.wav', false, event);
+  var sign = '';
+  sign += this.appSecret;
+  sign += 'api=';
+  sign += apiName;
+  sign += 'appkey=';
+  sign += this.appKey;
+  sign += 'timestamp=';
+  sign += timestamp;
+  sign += this.appSecret;
+  // Generate MD5 digest.
+  sign = md5(sign);
 
+  // Assemble all the HTTP parameters you want to send
+  var url = '';
+  url += this.apiBaseUrl + '?_from=nodejs';
+  url += '&appkey=' + this.appKey;
+  url += '&api=';
+  url += apiName;
+  url += '&timestamp=' + timestamp;
+  url += '&sign=' + sign;
+  url += '&seq=' + seqValue;
+
+  return url;
+}
+
+var speechApi = new SpeechApiSample();
+speechApi.setLocalization('https://tw.olami.ai/cloudservice/api');
+speechApi.setAuthorization(process.env.AppKey, process.env.AppSecret);
+// Start sending audio file for recognition
+
+delayed.delay(() =>speechApi.sendAudioFile('asr', 'nli,seg', true, './output.wav', false, event), 500)
 
         }).catch(function (e) {
           console.error(e);

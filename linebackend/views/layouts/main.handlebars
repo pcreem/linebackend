@@ -540,7 +540,6 @@ are based on 10px sizing. So basically 1.5rem = 15px :) */
     dl,
     figure,
     table,
-    p,
     ul,
     ol,
     form {
@@ -1112,114 +1111,15 @@ there.
 
 
 
-        {{#ifCond user.role 'root'}}
-        <li class="navbar-item"><a class="navbar-link" href="/admin/index">dashboard</a></li>
-        <li class="navbar-item">
-          <a class="navbar-link" href="#" data-popover="#Browse">Browse</a>
-          <div id="Browse" class="popover">
-            <ul class="popover-list">
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/users">Users</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/farmers">Farmers</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/orders">Orders</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/products">Products</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/categories">Categories</a>
-              </li>
-            </ul>
-          </div>
-        </li>
-        <li class="navbar-item">
-          <a class="navbar-link" href="#" data-popover="#Create">Create</a>
-          <div id="Create" class="popover">
-            <ul class="popover-list">
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/create/users">Users/Farmers</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link" href="/admin/create/products">Products</a>
-              </li>
-              {{!-- <li class="popover-item">
-                        <a class="popover-link" href="/admin/create/categories">Categories</a>
-                      </li> --}}
-            </ul>
-          </div>
-        </li>
+    
+
+
+        
+
+        {{#if user}}
         <li class="navbar-item"><a class="navbar-link" href="/admin/lines">line</a></li>
         <li class="navbar-item"> <a class="navbar-link" href="/users/{{user.id}}">Hi, {{user.name}}</a></li>
         <li class="navbar-item"> <a class="navbar-link" href="/logout">Logout</a></li>
-        {{else}}
-        <li class="navbar-item">
-          <a class="navbar-link" href="#" data-popover="#Population">Population</a>
-          <div id="Population" class="popover">
-            <ul class="popover-list">
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=1">Atayal</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=2">Bunun</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=3">Tsou</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=4">Rukai</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=5">Paiwan</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=6">Amis</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=7">Pinuyumayan</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=8">Truku</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=9">Sediq</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?populationId=10">Tao</a>
-              </li>
-            </ul>
-          </div>
-        </li>
-        <li class="navbar-item">
-          <a class="navbar-link" href="#" data-popover="#Category">Category</a>
-          <div id="Category" class="popover">
-            <ul class="popover-list">
-              <li class="popover-item">
-                <a class="popover-link " href="/?categoryId=1">Grains</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?categoryId=2">Vegetables</a>
-              </li>
-              <li class="popover-item">
-                <a class="popover-link " href="/?categoryId=3">fruit</a>
-              </li>
-            </ul>
-          </div>
-        </li>
-        {{/ifCond}}
-
-        {{#ifCond user.role 'user'}}
-        <li class="navbar-item"><a class="navbar-link" href="/cart">Cart</a></li>
-        <li class="navbar-item"> <a class="navbar-link" href="/orders">Orders</a></li>
-
-        <li class="navbar-item"> <a class="navbar-link" href="/users/{{user.id}}">Hi, {{user.name}}</a></li>
-        <li class="navbar-item"> <a class="navbar-link" href="/logout">Logout</a></li>
-        {{/ifCond}}
-
-        {{#if user}}
         {{else}}
         <li class="navbar-item"><a class="navbar-link" href="/signin">SignIn</a></li>
         {{/if}}
@@ -1295,6 +1195,31 @@ there.
     function w3_close() {
       document.getElementById("mySidebar").style.display = "none";
     }
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+
+
+      $(".copy2input").click(function () {
+
+
+        if ($('.copy2input').is(":checked")) {
+          $("#name").val($("#user_name").text());
+          $("#phone").val($("#user_tel").text());
+          $("#address").val($("#user_address").text());
+
+        } else {
+          $("#name").val('');
+          $("#phone").val('');
+          $("#address").val('');
+        }
+
+
+      });
+
+    });
   </script>
 </body>
 

@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     usersn: DataTypes.STRING,
     name: DataTypes.STRING,
     image: DataTypes.STRING,
+    price: DataTypes.STRING,
     description: DataTypes.STRING
   }, {});
   Line.associate = function(models) {
